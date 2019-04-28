@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "657042111027",
+    "firebase_url": "https://cem-assignment.firebaseio.com",
+    "project_id": "cem-assignment",
+    "storage_bucket": "cem-assignment.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657042111027:android:9af9b00292246579",
+        "android_client_info": {
+          "package_name": "com.example.a300cem_assignment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657042111027-icoogi418e4v0o5ohkev9oagg2ki20dg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.a300cem_assignment",
+            "certificate_hash": "d7f794f28e28f73b8eb1ba97afb51f2bdf60850c"
+          }
+        },
+        {
+          "client_id": "657042111027-u6h596th85tl250lsu6r9tbmukbf78b3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9sE4iVwaClSrimRBbw0Lnr_nyhKckaYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657042111027-u6h596th85tl250lsu6r9tbmukbf78b3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
