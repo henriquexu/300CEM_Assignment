@@ -30,5 +30,11 @@ dependencies {
     //Firebase
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-database:16.1.0'
+    implementation 'com.firebaseui:firebase-ui-database:1.2.0'
+    implementation 'com.google.firebase:firebase-storage:10.2.0'
+    implementation 'com.google.firebase:firebase-auth:10.2.0'
+
+    //Image loader
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }
 apply plugin: 'com.google.gms.google-services'
