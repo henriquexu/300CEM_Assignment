@@ -34,8 +34,14 @@ import com.example.a300cem_assignment.Interface.ItemClickListener;
 import com.example.a300cem_assignment.Model.Event;
 import com.example.a300cem_assignment.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -44,11 +50,16 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    PlacesClient placesClient;
+    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,Place.Field.NAME,Place.Field.ADDRESS);
+    AutocompleteSupportFragment places_fragment;
     TextView txtUserName;
 
 
@@ -78,6 +89,8 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        initPlaces();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
         setSupportActionBar(toolbar);
@@ -118,13 +131,33 @@ public class Home extends AppCompatActivity
 
     }
 
+
+
+    private void initPlaces() {
+        Places.initialize(this, "AIzaSyAvM-YZRAPxd0oWuCgMq2vTp0B-6tgSR0k");
+        placesClient = Places.createClient(this);
+    }
+
     private void showDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle("Add new Event");
         alertDialog.setMessage("Please fill full information");
-
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
+
+        places_fragment = (AutocompleteSupportFragment)getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        places_fragment.setPlaceFields(placeFields);
+        places_fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                Toast.makeText(Home.this,""+place.getName(),Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Toast.makeText(Home.this,""+status.getStatusMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
 
         edtName = add_menu_layout.findViewById(R.id.edtEventName);
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
