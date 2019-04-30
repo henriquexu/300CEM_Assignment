@@ -17,8 +17,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class Details extends AppCompatActivity {
-    TextView food_name, food_price, event_description;
-    ImageView food_image;
+    TextView event_name, food_price, event_description;
+    ImageView event_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnCart;
 
@@ -38,9 +38,9 @@ public class Details extends AppCompatActivity {
 
         //Init view
         event_description = (TextView) findViewById(R.id.event_description);
-        food_name = (TextView) findViewById(R.id.food_name);
+        event_name = (TextView) findViewById(R.id.event_name);
         food_price = (TextView) findViewById(R.id.food_price);
-        food_image = (ImageView) findViewById(R.id.img_category);
+        event_image = (ImageView) findViewById(R.id.event_image);
         collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing);
         
         //Get intent
@@ -62,11 +62,11 @@ public class Details extends AppCompatActivity {
                 Event event = dataSnapshot.getValue(Event.class);
 
                 //Set Image
-                Picasso.with(getBaseContext()).load(event.getImage()).into(food_image);
+                Picasso.with(getBaseContext()).load(event.getImage()).into(event_image);
 
                 collapsingToolbarLayout.setTitle(event.getName());
                 food_price.setText(event.getLat_Lng());
-                food_name.setText(event.getName());
+                event_name.setText(event.getName());
                 event_description.setText(event.getAddress());
             }
 

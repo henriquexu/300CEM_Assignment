@@ -22,7 +22,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                android:id="@+id/img_category"
+                android:id="@+id/event_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
@@ -41,7 +41,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btnCart"
+        android:id="@+id/btnHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/white"
@@ -76,13 +76,13 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/food_name"
+                        android:id="@+id/event_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:padding="12dp"
                         android:textSize="20sp"
-                        android:text="Food Name" />
+                        android:text="Event Name" />
 
                     <LinearLayout
                         android:id="@+id/layout_price"
