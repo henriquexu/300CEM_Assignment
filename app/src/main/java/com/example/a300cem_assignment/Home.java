@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ public class Home extends AppCompatActivity
     //Add new menu layout
     EditText edtName;
     Button btnSelect, btnUpload;
+    ImageView img_event;
 
     Category newCategory;
 
@@ -129,6 +131,7 @@ public class Home extends AppCompatActivity
         edtName = add_menu_layout.findViewById(R.id.edtName);
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
         btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
+        img_event = add_menu_layout.findViewById(R.id.img_event);
 
         //Event for button
         btnSelect.setOnClickListener(new View.OnClickListener() {
@@ -214,6 +217,7 @@ public class Home extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             saveUri = data.getData();
+            img_event.setImageURI(saveUri);
             btnSelect.setText("image selected");
         }
     }
