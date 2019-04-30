@@ -13,18 +13,29 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/edtName"
+            android:id="@+id/edtEventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
             android:inputType="text"
             android:textSize="34sp" />
 
-        <LinearLayout
-            android:weightSum="2"
+        <fragment android:id="@+id/autocomplete_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            />
+
+        <ImageView
+            android:id="@+id/img_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <Button
                 android:id="@+id/btnSelect"

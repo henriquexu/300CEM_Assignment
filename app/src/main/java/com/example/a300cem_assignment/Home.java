@@ -3,7 +3,6 @@ package com.example.a300cem_assignment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.drm.ProcessedData;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,19 +23,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a300cem_assignment.Common.Common;
 import com.example.a300cem_assignment.Interface.ItemClickListener;
-import com.example.a300cem_assignment.Model.Category;
+import com.example.a300cem_assignment.Model.Event;
 import com.example.a300cem_assignment.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -45,10 +50,17 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    PlacesClient placesClient;
+    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,Place.Field.NAME,Place.Field.ADDRESS,Place.Field.LAT_LNG);
+    AutocompleteSupportFragment places_fragment;
+    Place address;
 
     TextView txtUserName;
 
@@ -58,7 +70,7 @@ public class Home extends AppCompatActivity
     DatabaseReference categories;
     FirebaseStorage storage;
     StorageReference storageReference;
-    FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
+    FirebaseRecyclerAdapter<Event, MenuViewHolder> adapter;
 
     //View
     RecyclerView recycler_menu;
@@ -67,8 +79,9 @@ public class Home extends AppCompatActivity
     //Add new menu layout
     EditText edtName;
     Button btnSelect, btnUpload;
+    ImageView img_event;
 
-    Category newCategory;
+    Event newEvent;
 
     Uri saveUri;
     private final int PICK_IMAGE_REQUEST = 71;
@@ -78,6 +91,8 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        initPlaces();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
         setSupportActionBar(toolbar);
@@ -118,17 +133,44 @@ public class Home extends AppCompatActivity
 
     }
 
+
+
+    private void initPlaces() {
+        Places.initialize(this, "AIzaSyAvM-YZRAPxd0oWuCgMq2vTp0B-6tgSR0k");
+        placesClient = Places.createClient(this);
+    }
+
     private void showDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
-        alertDialog.setTitle("Add new Category");
+        alertDialog.setTitle("Add new Event");
         alertDialog.setMessage("Please fill full information");
-
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
 
-        edtName = add_menu_layout.findViewById(R.id.edtName);
+
+        //Place auto-complete fragment
+        places_fragment = (AutocompleteSupportFragment)getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        places_fragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
+        ((EditText)places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setHint("Enter event address");
+        ((EditText)places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setTextSize(30.0f);
+        places_fragment.setPlaceFields(placeFields);
+        places_fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                address = place;
+                Toast.makeText(Home.this,""+place.getName(),Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Toast.makeText(Home.this,""+status.getStatusMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        edtName = add_menu_layout.findViewById(R.id.edtEventName);
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
         btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
+        img_event = add_menu_layout.findViewById(R.id.img_event);
 
         //Event for button
         btnSelect.setOnClickListener(new View.OnClickListener() {
@@ -154,16 +196,18 @@ public class Home extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 //Create new category
-                if (newCategory != null) {
-                    categories.push().setValue(newCategory);
-                    Snackbar.make(drawer, newCategory.getName(), Snackbar.LENGTH_SHORT).show();
+                if (newEvent != null) {
+                    categories.push().setValue(newEvent);
+                    Snackbar.make(drawer, newEvent.getName(), Snackbar.LENGTH_SHORT).show();
                 }
+                getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)).commit();
             }
         });
         alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)).commit();
             }
         });
         alertDialog.show();
@@ -187,7 +231,7 @@ public class Home extends AppCompatActivity
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    newCategory = new Category(edtName.getText().toString(), uri.toString());
+                                    newEvent = new Event(edtName.getText().toString(), uri.toString(),address.getAddress(),address.getLatLng().toString());
                                 }
                             });
                         }
@@ -214,6 +258,7 @@ public class Home extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             saveUri = data.getData();
+            img_event.setImageURI(saveUri);
             btnSelect.setText("image selected");
         }
     }
@@ -226,21 +271,24 @@ public class Home extends AppCompatActivity
     }
 
     private void loadMenu() {
-        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(
-                Category.class,
+        adapter = new FirebaseRecyclerAdapter<Event, MenuViewHolder>(
+                Event.class,
                 R.layout.menu_item,
                 MenuViewHolder.class,
                 categories
         ) {
             @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
+            protected void populateViewHolder(final MenuViewHolder viewHolder, Event model, int position) {
                 viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage()).into(viewHolder.imageView);
 
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-
+                        //Start Activity
+                        Intent detail = new Intent(Home.this,Details.class);
+                        detail.putExtra("CategoryId",adapter.getRef(position).getKey());
+                        startActivity(detail);
                     }
                 });
             }
@@ -308,7 +356,7 @@ public class Home extends AppCompatActivity
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle().equals(Common.UPDATE)) {
             showUpdateDialog(adapter.getRef(item.getOrder()).getKey(), adapter.getItem(item.getOrder()));
-        }else if (item.getTitle().equals(Common.DELETE)) {
+        } else if (item.getTitle().equals(Common.DELETE)) {
             deleteCategory(adapter.getRef(item.getOrder()).getKey());
         }
         return super.onContextItemSelected(item);
@@ -318,15 +366,15 @@ public class Home extends AppCompatActivity
         categories.child(key).removeValue();
     }
 
-    private void showUpdateDialog(final String key, final Category item) {
+    private void showUpdateDialog(final String key, final Event item) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
-        alertDialog.setTitle("Update Category");
+        alertDialog.setTitle("Update Event");
         alertDialog.setMessage("Please fill full information");
 
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
 
-        edtName = add_menu_layout.findViewById(R.id.edtName);
+        edtName = add_menu_layout.findViewById(R.id.edtEventName);
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
         btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
 
@@ -369,7 +417,7 @@ public class Home extends AppCompatActivity
         alertDialog.show();
     }
 
-    private void changeImage(final Category item) {
+    private void changeImage(final Event item) {
         if (saveUri != null) {
             final ProgressDialog loadDialog = new ProgressDialog(this);
             loadDialog.setMessage("Uploading");
