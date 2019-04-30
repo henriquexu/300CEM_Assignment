@@ -56,7 +56,7 @@ import java.util.UUID;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    //Place auto-complete fragment
     PlacesClient placesClient;
     List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,Place.Field.NAME,Place.Field.ADDRESS,Place.Field.LAT_LNG);
     AutocompleteSupportFragment places_fragment;
@@ -67,7 +67,7 @@ public class Home extends AppCompatActivity
 
     //Firebase
     FirebaseDatabase database;
-    DatabaseReference categories;
+    DatabaseReference events;
     FirebaseStorage storage;
     StorageReference storageReference;
     FirebaseRecyclerAdapter<Event, MenuViewHolder> adapter;
@@ -99,7 +99,7 @@ public class Home extends AppCompatActivity
 
         //Init Firebase
         database = FirebaseDatabase.getInstance();
-        categories = database.getReference("Categories");
+        events = database.getReference("Categories");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
@@ -197,7 +197,7 @@ public class Home extends AppCompatActivity
                 dialog.dismiss();
                 //Create new category
                 if (newEvent != null) {
-                    categories.push().setValue(newEvent);
+                    events.push().setValue(newEvent);
                     Snackbar.make(drawer, newEvent.getName(), Snackbar.LENGTH_SHORT).show();
                 }
                 getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)).commit();
@@ -275,7 +275,7 @@ public class Home extends AppCompatActivity
                 Event.class,
                 R.layout.menu_item,
                 MenuViewHolder.class,
-                categories
+                events
         ) {
             @Override
             protected void populateViewHolder(final MenuViewHolder viewHolder, Event model, int position) {
@@ -363,7 +363,7 @@ public class Home extends AppCompatActivity
     }
 
     private void deleteCategory(String key) {
-        categories.child(key).removeValue();
+        events.child(key).removeValue();
     }
 
     private void showUpdateDialog(final String key, final Event item) {
@@ -405,7 +405,7 @@ public class Home extends AppCompatActivity
                 dialog.dismiss();
                 //Update Info
                 item.setName(edtName.getText().toString());
-                categories.child(key).setValue(item);
+                events.child(key).setValue(item);
             }
         });
         alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {

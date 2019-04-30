@@ -65,9 +65,9 @@ public class Details extends AppCompatActivity {
                 Picasso.with(getBaseContext()).load(event.getImage()).into(food_image);
 
                 collapsingToolbarLayout.setTitle(event.getName());
-                food_price.setText(event.getName());
+                food_price.setText(event.getLat_Lng());
                 food_name.setText(event.getName());
-                event_description.setText(event.getName());
+                event_description.setText(event.getAddress());
             }
 
             @Override
