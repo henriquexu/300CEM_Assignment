@@ -126,7 +126,7 @@ public class Home extends AppCompatActivity
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
 
-        edtName = add_menu_layout.findViewById(R.id.edtName);
+        edtName = add_menu_layout.findViewById(R.id.edtEventName);
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
         btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
         img_event = add_menu_layout.findViewById(R.id.img_event);
@@ -331,7 +331,7 @@ public class Home extends AppCompatActivity
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
 
-        edtName = add_menu_layout.findViewById(R.id.edtName);
+        edtName = add_menu_layout.findViewById(R.id.edtEventName);
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
         btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
 

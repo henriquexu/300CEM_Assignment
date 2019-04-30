@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/edtName"
+            android:id="@+id/edtEventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
@@ -21,15 +21,15 @@
             android:textSize="34sp" />
 
         <ImageView
+            android:id="@+id/img_event"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/img_event"/>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:weightSum="2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <Button
                 android:id="@+id/btnSelect"
