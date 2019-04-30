@@ -91,6 +91,8 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        //Init Places API method
         initPlaces();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -134,7 +136,7 @@ public class Home extends AppCompatActivity
     }
 
 
-
+    //Init Places API
     private void initPlaces() {
         Places.initialize(this, "AIzaSyAvM-YZRAPxd0oWuCgMq2vTp0B-6tgSR0k");
         placesClient = Places.createClient(this);
