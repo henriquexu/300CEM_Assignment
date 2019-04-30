@@ -3,7 +3,6 @@ package com.example.a300cem_assignment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.drm.ProcessedData;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,7 +23,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,7 +31,7 @@ import android.widget.Toast;
 
 import com.example.a300cem_assignment.Common.Common;
 import com.example.a300cem_assignment.Interface.ItemClickListener;
-import com.example.a300cem_assignment.Model.Category;
+import com.example.a300cem_assignment.Model.Event;
 import com.example.a300cem_assignment.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -59,7 +57,7 @@ public class Home extends AppCompatActivity
     DatabaseReference categories;
     FirebaseStorage storage;
     StorageReference storageReference;
-    FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
+    FirebaseRecyclerAdapter<Event, MenuViewHolder> adapter;
 
     //View
     RecyclerView recycler_menu;
@@ -70,7 +68,7 @@ public class Home extends AppCompatActivity
     Button btnSelect, btnUpload;
     ImageView img_event;
 
-    Category newCategory;
+    Event newEvent;
 
     Uri saveUri;
     private final int PICK_IMAGE_REQUEST = 71;
@@ -122,7 +120,7 @@ public class Home extends AppCompatActivity
 
     private void showDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
-        alertDialog.setTitle("Add new Category");
+        alertDialog.setTitle("Add new Event");
         alertDialog.setMessage("Please fill full information");
 
         LayoutInflater inflater = this.getLayoutInflater();
@@ -157,9 +155,9 @@ public class Home extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 //Create new category
-                if (newCategory != null) {
-                    categories.push().setValue(newCategory);
-                    Snackbar.make(drawer, newCategory.getName(), Snackbar.LENGTH_SHORT).show();
+                if (newEvent != null) {
+                    categories.push().setValue(newEvent);
+                    Snackbar.make(drawer, newEvent.getName(), Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -190,7 +188,7 @@ public class Home extends AppCompatActivity
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    newCategory = new Category(edtName.getText().toString(), uri.toString());
+                                    newEvent = new Event(edtName.getText().toString(), uri.toString());
                                 }
                             });
                         }
@@ -230,14 +228,14 @@ public class Home extends AppCompatActivity
     }
 
     private void loadMenu() {
-        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(
-                Category.class,
+        adapter = new FirebaseRecyclerAdapter<Event, MenuViewHolder>(
+                Event.class,
                 R.layout.menu_item,
                 MenuViewHolder.class,
                 categories
         ) {
             @Override
-            protected void populateViewHolder(final MenuViewHolder viewHolder, Category model, int position) {
+            protected void populateViewHolder(final MenuViewHolder viewHolder, Event model, int position) {
                 viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage()).into(viewHolder.imageView);
 
@@ -325,9 +323,9 @@ public class Home extends AppCompatActivity
         categories.child(key).removeValue();
     }
 
-    private void showUpdateDialog(final String key, final Category item) {
+    private void showUpdateDialog(final String key, final Event item) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
-        alertDialog.setTitle("Update Category");
+        alertDialog.setTitle("Update Event");
         alertDialog.setMessage("Please fill full information");
 
         LayoutInflater inflater = this.getLayoutInflater();
@@ -376,7 +374,7 @@ public class Home extends AppCompatActivity
         alertDialog.show();
     }
 
-    private void changeImage(final Category item) {
+    private void changeImage(final Event item) {
         if (saveUri != null) {
             final ProgressDialog loadDialog = new ProgressDialog(this);
             loadDialog.setMessage("Uploading");

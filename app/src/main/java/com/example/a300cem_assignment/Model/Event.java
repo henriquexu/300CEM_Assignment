@@ -1,13 +1,13 @@
 package com.example.a300cem_assignment.Model;
 
-public class Category {
+public class Event {
     private String Name;
     private String Image;
 
-    public Category() {
+    public Event() {
     }
 
-    public Category(String name, String image) {
+    public Event(String name, String image) {
         Name = name;
         Image = image;
     }

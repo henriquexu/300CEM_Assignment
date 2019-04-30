@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.a300cem_assignment.Model.Category;
+import com.example.a300cem_assignment.Model.Event;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,15 +59,15 @@ public class Details extends AppCompatActivity {
                 if (!dataSnapshot.exists()) {
                     return;
                 }
-                Category category = dataSnapshot.getValue(Category.class);
+                Event event = dataSnapshot.getValue(Event.class);
 
                 //Set Image
-                Picasso.with(getBaseContext()).load(category.getImage()).into(food_image);
+                Picasso.with(getBaseContext()).load(event.getImage()).into(food_image);
 
-                collapsingToolbarLayout.setTitle(category.getName());
-                food_price.setText(category.getName());
-                food_name.setText(category.getName());
-                food_description.setText(category.getName());
+                collapsingToolbarLayout.setTitle(event.getName());
+                food_price.setText(event.getName());
+                food_name.setText(event.getName());
+                food_description.setText(event.getName());
             }
 
             @Override
