@@ -110,7 +110,7 @@ public class Home extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog();
+                showCreateDialog();
             }
         });
         drawer = findViewById(R.id.drawer_layout);
@@ -142,7 +142,7 @@ public class Home extends AppCompatActivity
         placesClient = Places.createClient(this);
     }
 
-    private void showDialog() {
+    private void showCreateDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle("Add new Event");
         alertDialog.setMessage("Please fill full information");
