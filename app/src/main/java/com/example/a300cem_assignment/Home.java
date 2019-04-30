@@ -233,14 +233,17 @@ public class Home extends AppCompatActivity
                 categories
         ) {
             @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
+            protected void populateViewHolder(final MenuViewHolder viewHolder, Category model, int position) {
                 viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage()).into(viewHolder.imageView);
 
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-
+                        //Start Activity
+                        Intent detail = new Intent(Home.this,Details.class);
+                        detail.putExtra("CategoryId",adapter.getRef(position).getKey());
+                        startActivity(detail);
                     }
                 });
             }
@@ -308,7 +311,7 @@ public class Home extends AppCompatActivity
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle().equals(Common.UPDATE)) {
             showUpdateDialog(adapter.getRef(item.getOrder()).getKey(), adapter.getItem(item.getOrder()));
-        }else if (item.getTitle().equals(Common.DELETE)) {
+        } else if (item.getTitle().equals(Common.DELETE)) {
             deleteCategory(adapter.getRef(item.getOrder()).getKey());
         }
         return super.onContextItemSelected(item);
