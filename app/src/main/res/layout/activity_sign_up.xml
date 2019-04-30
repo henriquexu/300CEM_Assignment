@@ -23,7 +23,7 @@
             android:textSize="34sp" />
 
         <EditText
-            android:id="@+id/edtEventName"
+            android:id="@+id/edtName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
