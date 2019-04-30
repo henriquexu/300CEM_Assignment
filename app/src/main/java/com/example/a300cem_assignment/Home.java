@@ -58,8 +58,10 @@ public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     PlacesClient placesClient;
-    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,Place.Field.NAME,Place.Field.ADDRESS);
+    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,Place.Field.NAME,Place.Field.ADDRESS,Place.Field.LAT_LNG);
     AutocompleteSupportFragment places_fragment;
+    Place address;
+
     TextView txtUserName;
 
 
@@ -145,11 +147,17 @@ public class Home extends AppCompatActivity
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
 
+
+        //Place auto-complete fragment
         places_fragment = (AutocompleteSupportFragment)getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        places_fragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
+        ((EditText)places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setHint("Enter event address");
+        ((EditText)places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setTextSize(30.0f);
         places_fragment.setPlaceFields(placeFields);
         places_fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
+                address = place;
                 Toast.makeText(Home.this,""+place.getName(),Toast.LENGTH_SHORT).show();
             }
 
@@ -192,12 +200,14 @@ public class Home extends AppCompatActivity
                     categories.push().setValue(newEvent);
                     Snackbar.make(drawer, newEvent.getName(), Snackbar.LENGTH_SHORT).show();
                 }
+                getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)).commit();
             }
         });
         alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)).commit();
             }
         });
         alertDialog.show();
@@ -221,7 +231,7 @@ public class Home extends AppCompatActivity
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    newEvent = new Event(edtName.getText().toString(), uri.toString());
+                                    newEvent = new Event(edtName.getText().toString(), uri.toString(),address.getAddress(),address.getLatLng().toString());
                                 }
                             });
                         }
