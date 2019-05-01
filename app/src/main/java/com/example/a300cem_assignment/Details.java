@@ -3,7 +3,6 @@ package com.example.a300cem_assignment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -24,16 +23,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class Details extends AppCompatActivity {
-    TextView event_name, food_price, event_description;
+    TextView event_name, event_date, event_description;
     ImageView event_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnCart;
     SupportMapFragment map;
 
-    String categoryId = "";
+    String eventId = "";
 
     FirebaseDatabase database;
-    DatabaseReference categories;
+    DatabaseReference events;
 
     Double lat = 0.0;
     Double lng = 0.0;
@@ -48,27 +47,27 @@ public class Details extends AppCompatActivity {
 
         //Firebase init
         database = FirebaseDatabase.getInstance();
-        categories = database.getReference("Categories");
+        events = database.getReference("Events");
 
         //Init view
         event_description = (TextView) findViewById(R.id.event_description);
         event_name = (TextView) findViewById(R.id.event_name);
-        food_price = (TextView) findViewById(R.id.food_price);
+        event_date = (TextView) findViewById(R.id.food_price);
         event_image = (ImageView) findViewById(R.id.event_image);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
 
         //Get intent
         if (getIntent() != null) {
-            categoryId = getIntent().getStringExtra("CategoryId");
+            eventId = getIntent().getStringExtra("EventId");
         }
-        if (!categoryId.isEmpty()) {
-            getDetailFood(categoryId);
+        if (!eventId.isEmpty()) {
+            getDetailFood(eventId);
 
         }
     }
 
     private void getDetailFood(final String categoryId) {
-        categories.child(categoryId).addValueEventListener(new ValueEventListener() {
+        events.child(categoryId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
@@ -80,7 +79,7 @@ public class Details extends AppCompatActivity {
                 Picasso.with(getBaseContext()).load(event.getImage()).into(event_image);
 
                 collapsingToolbarLayout.setTitle(event.getName());
-                food_price.setText(event.getName());
+                event_date.setText(event.getName());
                 event_name.setText(event.getName());
                 event_description.setText(event.getAddress());
 
