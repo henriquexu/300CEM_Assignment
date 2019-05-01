@@ -1,10 +1,13 @@
 package com.example.a300cem_assignment;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -86,7 +89,8 @@ public class Home extends AppCompatActivity
     Event newEvent;
 
     Uri saveUri;
-    private final int PICK_IMAGE_REQUEST = 71;
+    private final int PICK_IMAGE = 10;
+    private final int PICK_CAMERA = 20;
     DrawerLayout drawer;
 
     @Override
@@ -187,7 +191,7 @@ public class Home extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 //Choose image from gallery
-                chooseImage();
+                showImageImportDialog();
             }
         });
         btnUpload.setOnClickListener(new View.OnClickListener() {
@@ -266,18 +270,49 @@ public class Home extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            saveUri = data.getData();
+            img_event.setImageURI(saveUri);
+            btnSelect.setText(getString(R.string.selected));
+        }
+        if (requestCode == PICK_CAMERA && resultCode == RESULT_OK && data != null && data.getData() != null) {
             saveUri = data.getData();
             img_event.setImageURI(saveUri);
             btnSelect.setText(getString(R.string.selected));
         }
     }
 
-    private void chooseImage() {
+    private void pickGallery() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.select)), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.select)), PICK_IMAGE);
+    }
+
+    private void pickCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, saveUri);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.select)),PICK_CAMERA);
+    }
+
+    private void showImageImportDialog() {
+        String[] items = {" Camera", " Gallery"};
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Select Image");
+        dialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    pickCamera();
+                }
+                if (which == 1) {
+
+                    pickGallery();
+                }
+            }
+
+        });
+        dialog.create().show();
     }
 
     private void loadMenu(String userId) {
@@ -401,7 +436,7 @@ public class Home extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 //Choose image from gallery
-                chooseImage();
+                showImageImportDialog();
             }
         });
         btnUpload.setOnClickListener(new View.OnClickListener() {
