@@ -23,25 +23,28 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-public class Details extends AppCompatActivity implements OnMapReadyCallback {
+public class Details extends AppCompatActivity {
     TextView event_name, food_price, event_description;
     ImageView event_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnCart;
+    SupportMapFragment map;
 
     String categoryId = "";
 
     FirebaseDatabase database;
     DatabaseReference categories;
 
+    Double lat = 0.0;
+    Double lng = 0.0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-
         //Map Fragment
-        SupportMapFragment map = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
-        map.getMapAsync(this);
+        map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
 
         //Firebase init
         database = FirebaseDatabase.getInstance();
@@ -52,14 +55,15 @@ public class Details extends AppCompatActivity implements OnMapReadyCallback {
         event_name = (TextView) findViewById(R.id.event_name);
         food_price = (TextView) findViewById(R.id.food_price);
         event_image = (ImageView) findViewById(R.id.event_image);
-        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing);
-        
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
+
         //Get intent
-        if (getIntent()!=null){
+        if (getIntent() != null) {
             categoryId = getIntent().getStringExtra("CategoryId");
         }
-        if (!categoryId.isEmpty()){
+        if (!categoryId.isEmpty()) {
             getDetailFood(categoryId);
+
         }
     }
 
@@ -76,9 +80,20 @@ public class Details extends AppCompatActivity implements OnMapReadyCallback {
                 Picasso.with(getBaseContext()).load(event.getImage()).into(event_image);
 
                 collapsingToolbarLayout.setTitle(event.getName());
-                food_price.setText(event.getLat_Lng());
+                food_price.setText(event.getName());
                 event_name.setText(event.getName());
                 event_description.setText(event.getAddress());
+
+                lat = event.getLat();
+                lng = event.getLng();
+                map.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        LatLng location = new LatLng(lat, lng);
+                        googleMap.addMarker(new MarkerOptions().position(location).title("Location"));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
+                    }
+                });
             }
 
             @Override
@@ -88,11 +103,5 @@ public class Details extends AppCompatActivity implements OnMapReadyCallback {
         });
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        LatLng location = new LatLng(19.169257,73.341601);
-        googleMap.addMarker(new MarkerOptions().position(location).title("Location"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,15));
 
-    }
 }

@@ -233,7 +233,7 @@ public class Home extends AppCompatActivity
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    newEvent = new Event(edtName.getText().toString(), uri.toString(),address.getAddress(),address.getLatLng().toString());
+                                    newEvent = new Event(edtName.getText().toString(), uri.toString(),address.getAddress(),address.getLatLng().latitude,address.getLatLng().longitude);
                                 }
                             });
                         }

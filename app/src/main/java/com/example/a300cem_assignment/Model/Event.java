@@ -4,15 +4,17 @@ public class Event {
     private String Name;
     private String Image;
     private String Address;
-    private String Lat_Lng;
+    private Double Lat;
+    private Double Lng;
     public Event() {
     }
 
-    public Event(String name, String image, String address, String lat_Lng) {
+    public Event(String name, String image, String address, Double lat, Double lng) {
         Name = name;
         Image = image;
         Address = address;
-        Lat_Lng = lat_Lng;
+        Lat = lat;
+        Lng = lng;
     }
 
     public String getName() {
@@ -39,11 +41,19 @@ public class Event {
         Address = address;
     }
 
-    public String getLat_Lng() {
-        return Lat_Lng;
+    public Double getLat() {
+        return Lat;
     }
 
-    public void setLat_Lng(String lat_Lng) {
-        Lat_Lng = lat_Lng;
+    public void setLat(Double lat) {
+        Lat = lat;
+    }
+
+    public Double getLng() {
+        return Lng;
+    }
+
+    public void setLng(Double lng) {
+        Lng = lng;
     }
 }
