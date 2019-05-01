@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorAccent"
             android:id="@+id/menu_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -18,7 +18,8 @@
 
         <TextView
             android:id="@+id/menu_name"
-            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/colorPrimary"
+            android:background="@color/cardview_dark_background"
             android:text="Name of Menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
