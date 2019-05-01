@@ -65,6 +65,7 @@ public class Home extends AppCompatActivity
 
     //Current User
     TextView txtUserName;
+    String userId = "";
 
     //Firebase
     FirebaseDatabase database;
@@ -97,7 +98,7 @@ public class Home extends AppCompatActivity
         initPlaces();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Menu");
+        toolbar.setTitle("Home");
         setSupportActionBar(toolbar);
 
         //Init Firebase
@@ -132,7 +133,13 @@ public class Home extends AppCompatActivity
         recycler_menu.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recycler_menu.setLayoutManager(layoutManager);
-        loadMenu();
+        if (getIntent() != null) {
+            userId = getIntent().getStringExtra("UserId");
+        }
+        if (!userId.isEmpty()) {
+            loadMenu(userId);
+
+        }
 
     }
 
@@ -234,7 +241,7 @@ public class Home extends AppCompatActivity
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    newEvent = new Event(edtEventName.getText().toString(), uri.toString(), address.getAddress(), address.getLatLng().latitude, address.getLatLng().longitude);
+                                    newEvent = new Event(edtEventName.getText().toString(), uri.toString(), address.getAddress(), address.getLatLng().latitude, address.getLatLng().longitude,userId);
                                 }
                             });
                         }
@@ -273,12 +280,12 @@ public class Home extends AppCompatActivity
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
-    private void loadMenu() {
+    private void loadMenu(String userId) {
         adapter = new FirebaseRecyclerAdapter<Event, MenuViewHolder>(
                 Event.class,
                 R.layout.menu_item,
                 MenuViewHolder.class,
-                events
+                events.orderByChild("userId").equalTo(userId)
         ) {
             @Override
             protected void populateViewHolder(final MenuViewHolder viewHolder, Event model, int position) {
@@ -401,6 +408,7 @@ public class Home extends AppCompatActivity
         //Default Values
         edtEventName.setText(item.getName());
         places_fragment.setText(item.getAddress());
+
 
         //Event for button
         btnSelect.setOnClickListener(new View.OnClickListener() {

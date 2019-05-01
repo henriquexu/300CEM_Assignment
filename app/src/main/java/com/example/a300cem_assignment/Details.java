@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class Details extends AppCompatActivity {
-    TextView event_name, event_date, event_description;
+    TextView event_date, event_description;
     ImageView event_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnCart;
@@ -51,8 +51,7 @@ public class Details extends AppCompatActivity {
 
         //Init view
         event_description = (TextView) findViewById(R.id.event_description);
-        event_name = (TextView) findViewById(R.id.event_name);
-        event_date = (TextView) findViewById(R.id.food_price);
+        event_date = (TextView) findViewById(R.id.event_date);
         event_image = (ImageView) findViewById(R.id.event_image);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
 
@@ -80,7 +79,6 @@ public class Details extends AppCompatActivity {
 
                 collapsingToolbarLayout.setTitle(event.getName());
                 event_date.setText(event.getName());
-                event_name.setText(event.getName());
                 event_description.setText(event.getAddress());
 
                 lat = event.getLat();

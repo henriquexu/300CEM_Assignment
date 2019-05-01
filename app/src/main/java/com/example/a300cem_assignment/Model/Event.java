@@ -6,15 +6,17 @@ public class Event {
     private String Address;
     private Double Lat;
     private Double Lng;
+    private String UserId;
     public Event() {
     }
 
-    public Event(String name, String image, String address, Double lat, Double lng) {
+    public Event(String name, String image, String address, Double lat, Double lng, String userId) {
         Name = name;
         Image = image;
         Address = address;
         Lat = lat;
         Lng = lng;
+        UserId = userId;
     }
 
     public String getName() {
@@ -55,5 +57,13 @@ public class Event {
 
     public void setLng(Double lng) {
         Lng = lng;
+    }
+
+    public String getUserId() {
+        return UserId;
+    }
+
+    public void setUserId(String userId) {
+        UserId = userId;
     }
 }

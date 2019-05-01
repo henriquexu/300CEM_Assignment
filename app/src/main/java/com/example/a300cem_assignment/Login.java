@@ -55,6 +55,7 @@ public class Login extends AppCompatActivity {
                                 {
                                     Intent home = new Intent(Login.this, Home.class);
                                     Common.currentUser=user;
+                                    home.putExtra("UserId",edtPhone.getText().toString());
                                     startActivity(home);
                                     finish();
                                 }
