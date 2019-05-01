@@ -98,7 +98,7 @@ public class Home extends AppCompatActivity
         initPlaces();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Home");
+        toolbar.setTitle(getString(R.string.home));
         setSupportActionBar(toolbar);
 
         //Init Firebase
@@ -241,7 +241,7 @@ public class Home extends AppCompatActivity
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    newEvent = new Event(edtEventName.getText().toString(), uri.toString(), address.getAddress(), address.getLatLng().latitude, address.getLatLng().longitude,userId);
+                                    newEvent = new Event(edtEventName.getText().toString(), uri.toString(), address.getAddress(), address.getLatLng().latitude, address.getLatLng().longitude, userId);
                                 }
                             });
                         }
@@ -269,7 +269,7 @@ public class Home extends AppCompatActivity
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             saveUri = data.getData();
             img_event.setImageURI(saveUri);
-            btnSelect.setText("image selected");
+            btnSelect.setText(getString(R.string.selected));
         }
     }
 
@@ -277,7 +277,7 @@ public class Home extends AppCompatActivity
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.select)), PICK_IMAGE_REQUEST);
     }
 
     private void loadMenu(String userId) {
@@ -327,20 +327,6 @@ public class Home extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

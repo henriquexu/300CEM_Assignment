@@ -18,7 +18,7 @@
             android:id="@+id/edtPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone Number"
+            android:hint="@string/phone"
             android:inputType="phone"
             android:textSize="34sp" />
 
@@ -26,7 +26,7 @@
             android:id="@+id/edtPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:textSize="34sp" />
     </LinearLayout>
@@ -40,6 +40,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:background="@color/btnLogin"
-        android:text="@string/login" />
+        android:text="@string/btnLogin" />
 
 </RelativeLayout>

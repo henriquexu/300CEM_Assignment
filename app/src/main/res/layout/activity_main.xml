@@ -35,7 +35,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:background="@color/btnSignUp"
-            android:text="@string/signUp" />
+            android:text="@string/btnSignUp" />
 
         <Button
             android:id="@+id/btnLogin"
@@ -44,7 +44,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:background="@color/btnLogin"
-            android:text="@string/login" />
+            android:text="@string/btnLogin" />
 
 
     </LinearLayout>
