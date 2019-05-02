@@ -21,10 +21,35 @@
             android:inputType="text"
             android:textSize="34sp" />
 
-        <fragment android:id="@+id/autocomplete_fragment"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <TextView
+                android:id="@+id/txtEvent_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:hint="Select date"
+                android:textSize="34sp" />
+
+            <Button
+                android:id="@+id/btnDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Select Date"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+
+        <fragment
+            android:id="@+id/autocomplete_fragment"
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             tools:layout="@layout/places_autocomplete_search_bar" />
 
         <ImageView

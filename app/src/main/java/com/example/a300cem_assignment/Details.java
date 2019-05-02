@@ -43,6 +43,7 @@ public class Details extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
 
+
         //Map Fragment
         map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -80,7 +81,7 @@ public class Details extends AppCompatActivity {
                 Picasso.with(getBaseContext()).load(event.getImage()).into(event_image);
 
                 collapsingToolbarLayout.setTitle(event.getName());
-                event_date.setText(event.getName());
+                event_date.setText(event.getDate());
                 event_description.setText(event.getAddress());
 
                 lat = event.getLat();

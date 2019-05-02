@@ -1,10 +1,9 @@
 package com.example.a300cem_assignment;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,6 +54,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,8 +84,9 @@ public class Home extends AppCompatActivity
 
     //Add new menu layout
     EditText edtEventName;
-    Button btnSelect, btnUpload;
+    Button btnSelect, btnUpload, btnDate;
     ImageView img_event;
+    TextView txtEventDate;
 
     Event newEvent;
 
@@ -92,6 +94,8 @@ public class Home extends AppCompatActivity
     private final int PICK_IMAGE = 10;
     private final int PICK_CAMERA = 20;
     DrawerLayout drawer;
+
+    DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,8 +160,8 @@ public class Home extends AppCompatActivity
 
     private void showCreateDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
-        alertDialog.setTitle("Add new Event");
-        alertDialog.setMessage("Please fill full information");
+        alertDialog.setTitle(getString(R.string.addEvent));
+        alertDialog.setMessage(getString(R.string.fillInfo));
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
 
@@ -165,7 +169,7 @@ public class Home extends AppCompatActivity
         //Place auto-complete fragment
         places_fragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         places_fragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
-        ((EditText) places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setHint("Enter event address");
+        ((EditText) places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setHint(getString(R.string.eventAddressHint));
         ((EditText) places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setTextSize(30.0f);
         places_fragment.setPlaceFields(placeFields);
         places_fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -185,8 +189,17 @@ public class Home extends AppCompatActivity
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
         btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
         img_event = add_menu_layout.findViewById(R.id.img_event);
+        txtEventDate = add_menu_layout.findViewById(R.id.txtEvent_date);
+        btnDate = add_menu_layout.findViewById(R.id.btnDate);
 
         //Event for button
+        btnDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Choose image from gallery
+                selectDate();
+            }
+        });
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,6 +241,25 @@ public class Home extends AppCompatActivity
 
     }
 
+    private void selectDate() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog dialog = new DatePickerDialog(
+                Home.this, android.R.style.Theme_Holo_Dialog_MinWidth, mDateSetListener, year, month, day);
+        dialog.show();
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                String date = dayOfMonth + "/" + month + "/" + year;
+                txtEventDate.setText(date);
+            }
+        };
+
+    }
+
     private void uploadImage() {
         if (saveUri != null) {
             final ProgressDialog loadDialog = new ProgressDialog(this);
@@ -245,7 +277,7 @@ public class Home extends AppCompatActivity
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    newEvent = new Event(edtEventName.getText().toString(), uri.toString(), address.getAddress(), address.getLatLng().latitude, address.getLatLng().longitude, userId);
+                                    newEvent = new Event(edtEventName.getText().toString(), uri.toString(), address.getAddress(), address.getLatLng().latitude, address.getLatLng().longitude, userId, txtEventDate.getText().toString());
                                 }
                             });
                         }
@@ -292,7 +324,7 @@ public class Home extends AppCompatActivity
     private void pickCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, saveUri);
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.select)),PICK_CAMERA);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.select)), PICK_CAMERA);
     }
 
     private void showImageImportDialog() {
@@ -397,7 +429,7 @@ public class Home extends AppCompatActivity
     private void showUpdateDialog(final String key, final Event item) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle("Update Event");
-        alertDialog.setMessage("Please fill full information");
+        alertDialog.setMessage(getString(R.string.fillInfo));
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
 
@@ -405,7 +437,7 @@ public class Home extends AppCompatActivity
         //Place auto-complete fragment
         places_fragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         places_fragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
-        ((EditText) places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setHint("Enter event address");
+        ((EditText) places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setHint(getString(R.string.eventAddressHint));
         ((EditText) places_fragment.getView().findViewById(R.id.places_autocomplete_search_input)).setTextSize(30.0f);
         places_fragment.setPlaceFields(placeFields);
         places_fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -425,9 +457,21 @@ public class Home extends AppCompatActivity
         btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
         btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
         img_event = add_menu_layout.findViewById(R.id.img_event);
+        txtEventDate = add_menu_layout.findViewById(R.id.txtEvent_date);
+        btnDate = add_menu_layout.findViewById(R.id.btnDate);
+
+        //Event for button
+        btnDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Choose image from gallery
+                selectDate();
+            }
+        });
 
         //Default Values
         edtEventName.setText(item.getName());
+        txtEventDate.setText(item.getDate());
         places_fragment.setText(item.getAddress());
 
 
@@ -459,6 +503,7 @@ public class Home extends AppCompatActivity
                 item.setAddress(address.getAddress());
                 item.setLat(address.getLatLng().latitude);
                 item.setLng(address.getLatLng().longitude);
+                item.setDate(txtEventDate.getText().toString());
                 events.child(key).setValue(item);
 
                 Snackbar.make(drawer, item.getName(), Snackbar.LENGTH_SHORT).show();
