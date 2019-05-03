@@ -49,6 +49,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -351,8 +352,9 @@ public class Home extends AppCompatActivity
     }
 
     private void loadMenu(String userId) {
+        Query getByUserId = events.orderByChild("userId").equalTo(userId);
         FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>()
-                .setQuery(events,Event.class).build();
+                .setQuery(getByUserId,Event.class).build();
         adapter = new FirebaseRecyclerAdapter<Event, MenuViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MenuViewHolder viewHolder, int position, @NonNull Event model) {
