@@ -21,4 +21,6 @@
     <string name="addEvent">Create Event</string>
     <string name="fillInfo">Please fill full information</string>
     <string name="eventAddressHint">Enter event address</string>
+    <string name="rememberMe">Remember Me</string>
+    <string name="updateEvent">Update Event</string>
 </resources>

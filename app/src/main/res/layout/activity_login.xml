@@ -29,6 +29,12 @@
             android:hint="@string/password"
             android:inputType="textPassword"
             android:textSize="34sp" />
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rememberMe"
+            android:textSize="20sp"/>
     </LinearLayout>
 
     <Button

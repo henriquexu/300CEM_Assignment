@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:background="@android:color/holo_green_light"
+            android:background="@color/colorPrimary"
             android:id="@+id/menu_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -19,7 +19,7 @@
         <TextView
             android:id="@+id/menu_name"
             android:textColor="@android:color/white"
-            android:background="@android:color/black"
+            android:background="@color/colorPrimaryDark"
             android:text="Name of Menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

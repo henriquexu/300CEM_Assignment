@@ -25,6 +25,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import com.example.a300cem_assignment.Interface.ItemClickListener;
 import com.example.a300cem_assignment.Model.Event;
 import com.example.a300cem_assignment.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -93,6 +95,7 @@ public class Home extends AppCompatActivity
     Uri saveUri;
     private final int PICK_IMAGE = 10;
     private final int PICK_CAMERA = 20;
+
     DrawerLayout drawer;
 
     DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -348,14 +351,11 @@ public class Home extends AppCompatActivity
     }
 
     private void loadMenu(String userId) {
-        adapter = new FirebaseRecyclerAdapter<Event, MenuViewHolder>(
-                Event.class,
-                R.layout.menu_item,
-                MenuViewHolder.class,
-                events.orderByChild("userId").equalTo(userId)
-        ) {
+        FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>()
+                .setQuery(events,Event.class).build();
+        adapter = new FirebaseRecyclerAdapter<Event, MenuViewHolder>(options) {
             @Override
-            protected void populateViewHolder(final MenuViewHolder viewHolder, Event model, int position) {
+            protected void onBindViewHolder(@NonNull MenuViewHolder viewHolder, int position, @NonNull Event model) {
                 viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage()).into(viewHolder.imageView);
 
@@ -370,11 +370,30 @@ public class Home extends AppCompatActivity
                 });
             }
 
+            @NonNull
+            @Override
+            public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View itemView = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.menu_item,viewGroup,false);
+                return new MenuViewHolder(itemView);
+            }
         };
-        adapter.notifyDataSetChanged();
+        adapter.startListening();
         recycler_menu.setAdapter(adapter);
 
 
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        loadMenu(userId);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     @Override
@@ -428,7 +447,7 @@ public class Home extends AppCompatActivity
 
     private void showUpdateDialog(final String key, final Event item) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
-        alertDialog.setTitle("Update Event");
+        alertDialog.setTitle(getString(R.string.updateEvent));
         alertDialog.setMessage(getString(R.string.fillInfo));
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
@@ -464,7 +483,7 @@ public class Home extends AppCompatActivity
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Choose image from gallery
+                //Select date for event
                 selectDate();
             }
         });
@@ -479,7 +498,7 @@ public class Home extends AppCompatActivity
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Choose image from gallery
+                //Choose image from gallery or camera
                 showImageImportDialog();
             }
         });
