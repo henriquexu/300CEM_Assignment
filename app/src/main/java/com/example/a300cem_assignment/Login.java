@@ -35,10 +35,10 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        edtPhone = (EditText) findViewById(R.id.edtPhone);
-        edtPassword = (EditText) findViewById(R.id.edtPassword);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        checkBox = (CheckBox) findViewById(R.id.checkbox);
+        edtPhone = findViewById(R.id.edtPhone);
+        edtPassword = findViewById(R.id.edtPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+        checkBox = findViewById(R.id.checkbox);
 
         //Get login info form shared preference
         sharedPreferences = getSharedPreferences("MySharedPreMain", Context.MODE_PRIVATE);
@@ -63,11 +63,11 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 //Dialog box when function is loading
                 final ProgressDialog loadDialog = new ProgressDialog(Login.this);
-                loadDialog.setMessage("Please wait...");
+                loadDialog.setMessage(getString(R.string.wait));
                 loadDialog.show();
                 if (edtPhone.getText().toString().equals("")){
                     loadDialog.dismiss();
-                    Toast.makeText(Login.this, "Please type phone", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, getString(R.string.inputPhone), Toast.LENGTH_SHORT).show();
                 } else {
                 //Save login info to shared preference
                 if (checkBox.isChecked()) {
@@ -76,7 +76,7 @@ public class Login extends AppCompatActivity {
                     editor.putString(NAME_KEY, edtPhone.getText().toString());
                     editor.putString(PASSWORD_KEY, edtPassword.getText().toString());
                     editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
-                    editor.commit();
+                    editor.apply();
                 }
                 if (!checkBox.isChecked()) {
                     checkBox.setChecked(false);
@@ -84,7 +84,7 @@ public class Login extends AppCompatActivity {
                     editor.putString(NAME_KEY, "");
                     editor.putString(PASSWORD_KEY, "");
                     editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
-                    editor.commit();
+                    editor.apply();
                 }
 
                 table_user.addValueEventListener(new ValueEventListener() {
@@ -104,11 +104,11 @@ public class Login extends AppCompatActivity {
                                     finish();
                                 }
                             } else {
-                                Toast.makeText(Login.this, "Login failed!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, getString(R.string.loginFailed), Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             loadDialog.dismiss();
-                            Toast.makeText(Login.this, "User doesn't exists!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, getString(R.string.userNotExist), Toast.LENGTH_SHORT).show();
                         }
                     }
 

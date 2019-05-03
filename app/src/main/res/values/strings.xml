@@ -12,8 +12,8 @@
     <string name="menu_logout">Logout</string>
     <string name="selected">Image Selected!</string>
     <string name="home">Home</string>
-    <string name="event_date">Event Date:</string>
-    <string name="event_address">Event Address: </string>
+    <string name="event_date">Event Date</string>
+    <string name="event_address">Event Address</string>
     <string name="phone">Phone Number</string>
     <string name="password">Password</string>
     <string name="userName">Name</string>
@@ -23,4 +23,21 @@
     <string name="eventAddressHint">Enter event address</string>
     <string name="rememberMe">Remember Me</string>
     <string name="updateEvent">Update Event</string>
+    <string name="created">Created</string>
+    <string name="yes">Confirm</string>
+    <string name="no">Cancel</string>
+    <string name="uploading">Uploading</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="location">Location</string>
+    <string name="wait">Please wait</string>
+    <string name="inputPhone">Please type phone</string>
+    <string name="loginFailed">Login failed!</string>
+    <string name="userNotExist">User doesn\'t exists!</string>
+    <string name="phoneExists">Phone Number already exists!</string>
+    <string name="signUpCompleted">Sign Up Completed!</string>
+    <string name="uploaded">Uploaded</string>
+    <string name="eventName">Event Name</string>
+    <string name="event_selectDate">Select Date</string>
+    <string name="upload">Upload</string>
 </resources>

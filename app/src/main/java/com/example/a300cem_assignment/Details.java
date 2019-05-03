@@ -2,7 +2,6 @@ package com.example.a300cem_assignment;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -26,7 +25,6 @@ public class Details extends AppCompatActivity {
     TextView event_date, event_description;
     ImageView event_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
-    FloatingActionButton btnCart;
     SupportMapFragment map;
 
     String eventId = "";
@@ -53,10 +51,10 @@ public class Details extends AppCompatActivity {
         events = database.getReference("Events");
 
         //Init view
-        event_description = (TextView) findViewById(R.id.event_description);
-        event_date = (TextView) findViewById(R.id.event_date);
-        event_image = (ImageView) findViewById(R.id.event_image);
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
+        event_description = findViewById(R.id.event_description);
+        event_date = findViewById(R.id.event_date);
+        event_image = findViewById(R.id.event_image);
+        collapsingToolbarLayout = findViewById(R.id.collapsing);
 
         //Get intent
         if (getIntent() != null) {
@@ -90,7 +88,7 @@ public class Details extends AppCompatActivity {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
                         LatLng location = new LatLng(lat, lng);
-                        googleMap.addMarker(new MarkerOptions().position(location).title("Location"));
+                        googleMap.addMarker(new MarkerOptions().position(location).title(getString(R.string.location)));
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
                     }
                 });

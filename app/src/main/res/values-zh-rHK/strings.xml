@@ -8,8 +8,8 @@
     <string name="menu_home">主頁</string>
     <string name="selected">已選擇圖片</string>
     <string name="title_activity_home">主頁</string>
-    <string name="event_address">"活動地址: "</string>
-    <string name="event_date">"活動日期: "</string>
+    <string name="event_address">活動地址</string>
+    <string name="event_date">活動日期</string>
     <string name="password">密碼</string>
     <string name="phone">電話號碼</string>
     <string name="userName">名字</string>
@@ -20,4 +20,21 @@
     <string name="addEvent">創立活動</string>
     <string name="rememberMe">記住我</string>
     <string name="updateEvent">更新活動</string>
+    <string name="camera">相機</string>
+    <string name="created">創立</string>
+    <string name="gallery">相冊</string>
+    <string name="no">取消</string>
+    <string name="uploading">上載中</string>
+    <string name="yes">確定</string>
+    <string name="signUpCompleted">註冊完成!</string>
+    <string name="phoneExists">電話號碼已存在!</string>
+    <string name="loginFailed">登入失敗!</string>
+    <string name="location">地點</string>
+    <string name="inputPhone">請輸入電話號碼!</string>
+    <string name="uploaded">已上載</string>
+    <string name="userNotExist">用戶不存在!</string>
+    <string name="wait">請稍後</string>
+    <string name="eventName">活動名稱</string>
+    <string name="event_selectDate">選擇日期</string>
+    <string name="upload">上載</string>
 </resources>

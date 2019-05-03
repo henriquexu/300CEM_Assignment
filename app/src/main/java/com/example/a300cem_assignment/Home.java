@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.example.a300cem_assignment.Common.Common;
 import com.example.a300cem_assignment.Interface.ItemClickListener;
 import com.example.a300cem_assignment.Model.Event;
@@ -119,7 +120,6 @@ public class Home extends AppCompatActivity
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,24 +137,23 @@ public class Home extends AppCompatActivity
 
         //Set user name
         View headerView = navigationView.getHeaderView(0);
-        txtUserName = (TextView) headerView.findViewById(R.id.txtUserName);
+        txtUserName = headerView.findViewById(R.id.txtUserName);
         txtUserName.setText(Common.currentUser.getName());
 
         //Init View
-        recycler_menu = (RecyclerView) findViewById(R.id.recycler_menu);
+        recycler_menu =  findViewById(R.id.recycler_menu);
         recycler_menu.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recycler_menu.setLayoutManager(layoutManager);
+
+        //Get intent
         if (getIntent() != null) {
             userId = getIntent().getStringExtra("UserId");
         }
         if (!userId.isEmpty()) {
             loadMenu(userId);
-
         }
-
     }
-
 
     //Init Places API
     private void initPlaces() {
@@ -168,7 +167,6 @@ public class Home extends AppCompatActivity
         alertDialog.setMessage(getString(R.string.fillInfo));
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout = inflater.inflate(R.layout.add_new_menu, null);
-
 
         //Place auto-complete fragment
         places_fragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -200,14 +198,14 @@ public class Home extends AppCompatActivity
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Choose image from gallery
+                //Select event date
                 selectDate();
             }
         });
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Choose image from gallery
+                //Choose image from gallery or camera
                 showImageImportDialog();
             }
         });
@@ -222,19 +220,19 @@ public class Home extends AppCompatActivity
         alertDialog.setIcon(R.drawable.ic_home_black_24dp);
 
         //Set button
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 //Create new category
                 if (newEvent != null) {
                     events.push().setValue(newEvent);
-                    Snackbar.make(drawer, newEvent.getName(), Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(drawer, getString(R.string.created)+newEvent.getName(), Snackbar.LENGTH_SHORT).show();
                 }
                 getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)).commit();
             }
         });
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -267,7 +265,7 @@ public class Home extends AppCompatActivity
     private void uploadImage() {
         if (saveUri != null) {
             final ProgressDialog loadDialog = new ProgressDialog(this);
-            loadDialog.setMessage("Uploading");
+            loadDialog.setMessage(getString(R.string.uploading));
             loadDialog.show();
 
             String imageName = UUID.randomUUID().toString();
@@ -277,10 +275,11 @@ public class Home extends AppCompatActivity
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             loadDialog.dismiss();
-                            Toast.makeText(Home.this, "uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Home.this, getString(R.string.uploaded), Toast.LENGTH_SHORT).show();
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
+                                    btnUpload.setText(getString(R.string.uploaded));
                                     newEvent = new Event(edtEventName.getText().toString(), uri.toString(), address.getAddress(), address.getLatLng().latitude, address.getLatLng().longitude, userId, txtEventDate.getText().toString());
                                 }
                             });
@@ -297,7 +296,7 @@ public class Home extends AppCompatActivity
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            loadDialog.setMessage(progress + "%");
+                            loadDialog.setMessage(getString(R.string.uploading) + " " + progress + "%");
                         }
                     });
         }
@@ -332,9 +331,9 @@ public class Home extends AppCompatActivity
     }
 
     private void showImageImportDialog() {
-        String[] items = {" Camera", " Gallery"};
+        String[] items = {getString(R.string.camera), getString(R.string.gallery)};
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Select Image");
+        dialog.setTitle(getString(R.string.select));
         dialog.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -342,7 +341,6 @@ public class Home extends AppCompatActivity
                     pickCamera();
                 }
                 if (which == 1) {
-
                     pickGallery();
                 }
             }
@@ -382,8 +380,6 @@ public class Home extends AppCompatActivity
         };
         adapter.startListening();
         recycler_menu.setAdapter(adapter);
-
-
     }
 
     @Override
@@ -515,7 +511,7 @@ public class Home extends AppCompatActivity
         alertDialog.setIcon(R.drawable.ic_home_black_24dp);
 
         //Set button
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -533,7 +529,7 @@ public class Home extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)).commit();
             }
         });
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -546,7 +542,7 @@ public class Home extends AppCompatActivity
     private void changeImage(final Event item) {
         if (saveUri != null) {
             final ProgressDialog loadDialog = new ProgressDialog(this);
-            loadDialog.setMessage("Uploading");
+            loadDialog.setMessage(getString(R.string.uploading));
             loadDialog.show();
 
             String imageName = UUID.randomUUID().toString();
@@ -556,10 +552,11 @@ public class Home extends AppCompatActivity
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             loadDialog.dismiss();
-                            Toast.makeText(Home.this, "uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Home.this, getString(R.string.uploaded), Toast.LENGTH_SHORT).show();
                             imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
+                                    btnUpload.setText(getString(R.string.uploaded));
                                     item.setImage(uri.toString());
                                 }
                             });
@@ -576,7 +573,7 @@ public class Home extends AppCompatActivity
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            loadDialog.setMessage(progress + "%");
+                            loadDialog.setMessage(getString(R.string.uploading) + " " + progress + "%");
                         }
                     });
         }

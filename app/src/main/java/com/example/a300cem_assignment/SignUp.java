@@ -26,10 +26,10 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        edtPhone = (EditText) findViewById(R.id.edtPhone);
-        edtName = (EditText) findViewById(R.id.edtName);
-        edtPassword = (EditText) findViewById(R.id.edtPassword);
-        btnSignUp = (Button) findViewById(R.id.btnSignUp);
+        edtPhone = findViewById(R.id.edtPhone);
+        edtName = findViewById(R.id.edtName);
+        edtPassword = findViewById(R.id.edtPassword);
+        btnSignUp = findViewById(R.id.btnSignUp);
 
         //Init Firebase
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -40,7 +40,7 @@ public class SignUp extends AppCompatActivity {
             public void onClick(View view) {
                 //Dialog box when function is loading
                 final ProgressDialog loadDialog = new ProgressDialog(SignUp.this);
-                loadDialog.setMessage("Please wait...");
+                loadDialog.setMessage(getString(R.string.wait));
                 loadDialog.show();
 
                 table_user.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -49,12 +49,12 @@ public class SignUp extends AppCompatActivity {
                         //Check if user phone exist
                         if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
                             loadDialog.dismiss();
-                            Toast.makeText(SignUp.this, "Phone Number already exists!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUp.this, getString(R.string.phoneExists), Toast.LENGTH_SHORT).show();
                         } else {
                             loadDialog.dismiss();
                             User user = new User(edtName.getText().toString(), edtPassword.getText().toString());
                             table_user.child(edtPhone.getText().toString()).setValue(user);
-                            Toast.makeText(SignUp.this,"Sign Up Completed!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUp.this, getString(R.string.signUpCompleted), Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }

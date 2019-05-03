@@ -10,21 +10,21 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:background="@color/colorPrimary"
             android:id="@+id/menu_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
             android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/menu_name"
-            android:textColor="@android:color/white"
-            android:background="@color/colorPrimaryDark"
-            android:text="Name of Menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@color/colorPrimaryDark"
             android:gravity="center"
+            android:text="@string/eventName"
+            android:textColor="@android:color/white"
             android:textSize="20sp" />
     </RelativeLayout>
 
