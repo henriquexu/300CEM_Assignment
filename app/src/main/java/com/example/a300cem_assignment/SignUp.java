@@ -10,30 +10,29 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.a300cem_assignment.Model.User;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class SignUp extends AppCompatActivity {
 
     EditText edtPhone, edtName, edtPassword;
     Button btnSignUp;
+    FirebaseAuth firebaseAuth;
+
+    String userName, userEmail, userPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        setUpView();
 
-        edtPhone = findViewById(R.id.edtPhone);
-        edtName = findViewById(R.id.edtName);
-        edtPassword = findViewById(R.id.edtPassword);
-        btnSignUp = findViewById(R.id.btnSignUp);
-
-        //Init Firebase
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference table_user = database.getReference("User");
+        firebaseAuth = FirebaseAuth.getInstance();
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,29 +41,63 @@ public class SignUp extends AppCompatActivity {
                 final ProgressDialog loadDialog = new ProgressDialog(SignUp.this);
                 loadDialog.setMessage(getString(R.string.wait));
                 loadDialog.show();
+                if (validateForm()) {
+                    String user_email = edtPhone.getText().toString().trim();
+                    String user_password = edtPassword.getText().toString().trim();
 
-                table_user.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        //Check if user phone exist
-                        if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
-                            loadDialog.dismiss();
-                            Toast.makeText(SignUp.this, getString(R.string.phoneExists), Toast.LENGTH_SHORT).show();
-                        } else {
-                            loadDialog.dismiss();
-                            User user = new User(edtName.getText().toString(), edtPassword.getText().toString());
-                            table_user.child(edtPhone.getText().toString()).setValue(user);
-                            Toast.makeText(SignUp.this, getString(R.string.signUpCompleted), Toast.LENGTH_SHORT).show();
-                            finish();
+                    firebaseAuth.createUserWithEmailAndPassword(user_email, user_password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                loadDialog.dismiss();
+                                saveUserData();
+                                firebaseAuth.signOut();
+                                Toast.makeText(SignUp.this, getString(R.string.signUpCompleted), Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else {
+                                //Catch Error
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseAuthUserCollisionException existEmail) {
+                                    loadDialog.dismiss();
+                                    Toast.makeText(SignUp.this, "Email exists", Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+                                    loadDialog.dismiss();
+                                    e.printStackTrace();
+                                }
+                            }
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                }
             }
         });
+    }
+
+    private void saveUserData() {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference userTable = firebaseDatabase.getReference("User");
+        User user = new User(userName, userEmail, userPassword);
+        userTable.child(firebaseAuth.getUid()).setValue(user);
+    }
+
+    private void setUpView() {
+        edtPhone = findViewById(R.id.edtPhone);
+        edtName = findViewById(R.id.edtName);
+        edtPassword = findViewById(R.id.edtPassword);
+        btnSignUp = findViewById(R.id.btnSignUp);
+    }
+
+    private boolean validateForm() {
+        boolean result = false;
+        userName = edtName.getText().toString();
+        userEmail = edtPhone.getText().toString();
+        userPassword = edtPassword.getText().toString();
+
+        if (userName.isEmpty() || userEmail.isEmpty() || userPassword.isEmpty()) {
+            Toast.makeText(SignUp.this, getString(R.string.fillInfo), Toast.LENGTH_SHORT).show();
+        } else {
+            result = true;
+        }
+        return result;
     }
 }

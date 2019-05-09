@@ -15,6 +15,11 @@ import android.widget.Toast;
 
 import com.example.a300cem_assignment.Common.Common;
 import com.example.a300cem_assignment.Model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -57,6 +62,16 @@ public class Login extends AppCompatActivity {
         //Init Firebase
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference table_user = database.getReference("User");
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user!=null){
+            finish();
+            Intent home = new Intent(Login.this, Home.class);;
+            startActivity(home);
+
+        }
+
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,59 +80,88 @@ public class Login extends AppCompatActivity {
                 final ProgressDialog loadDialog = new ProgressDialog(Login.this);
                 loadDialog.setMessage(getString(R.string.wait));
                 loadDialog.show();
-                if (edtPhone.getText().toString().equals("")){
+                if (edtPhone.getText().toString().equals("")) {
                     loadDialog.dismiss();
                     Toast.makeText(Login.this, getString(R.string.inputPhone), Toast.LENGTH_SHORT).show();
                 } else {
-                //Save login info to shared preference
-                if (checkBox.isChecked()) {
-                    checkBox.setChecked(true);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(NAME_KEY, edtPhone.getText().toString());
-                    editor.putString(PASSWORD_KEY, edtPassword.getText().toString());
-                    editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
-                    editor.apply();
-                }
-                if (!checkBox.isChecked()) {
-                    checkBox.setChecked(false);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(NAME_KEY, "");
-                    editor.putString(PASSWORD_KEY, "");
-                    editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
-                    editor.apply();
-                }
+                    //Save login info to shared preference
+                    if (checkBox.isChecked()) {
+                        checkBox.setChecked(true);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(NAME_KEY, edtPhone.getText().toString());
+                        editor.putString(PASSWORD_KEY, edtPassword.getText().toString());
+                        editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
+                        editor.apply();
+                    }
+                    if (!checkBox.isChecked()) {
+                        checkBox.setChecked(false);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(NAME_KEY, "");
+                        editor.putString(PASSWORD_KEY, "");
+                        editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
+                        editor.apply();
+                    }
 
-                table_user.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        //Check if user exists
-                        if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
-                            //Get user info
-                            loadDialog.dismiss();
-                            User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
-                            if (user.getPassword().equals(edtPassword.getText().toString())) {
-                                {
-                                    Intent home = new Intent(Login.this, Home.class);
-                                    Common.currentUser = user;
-                                    home.putExtra("UserId", edtPhone.getText().toString());
-                                    startActivity(home);
-                                    finish();
-                                }
+                    firebaseAuth.signInWithEmailAndPassword(edtPhone.getText().toString(), edtPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                table_user.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        loadDialog.dismiss();
+                                        User user = dataSnapshot.child(firebaseAuth.getUid()).getValue(User.class);
+                                        Intent home = new Intent(Login.this, Home.class);
+                                        Common.currentUser = user;
+                                        home.putExtra("UserId", firebaseAuth.getUid());
+                                        startActivity(home);
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             } else {
                                 Toast.makeText(Login.this, getString(R.string.loginFailed), Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            loadDialog.dismiss();
-                            Toast.makeText(Login.this, getString(R.string.userNotExist), Toast.LENGTH_SHORT).show();
+
                         }
-                    }
+                    });
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }}
+//                table_user.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        //Check if user exists
+//                        if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
+//                            //Get user info
+//                            loadDialog.dismiss();
+//                            User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
+//                            if (user.getPassword().equals(edtPassword.getText().toString())) {
+//                                {
+//                                    Intent home = new Intent(Login.this, Home.class);
+//                                    Common.currentUser = user;
+//                                    home.putExtra("UserId", edtPhone.getText().toString());
+//                                    startActivity(home);
+//                                    finish();
+//                                }
+//                            } else {
+//                                Toast.makeText(Login.this, getString(R.string.loginFailed), Toast.LENGTH_SHORT).show();
+//                            }
+//                        } else {
+//                            loadDialog.dismiss();
+//                            Toast.makeText(Login.this, getString(R.string.userNotExist), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+                }
+            }
         });
     }
 }

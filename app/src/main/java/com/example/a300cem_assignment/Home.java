@@ -48,6 +48,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -81,6 +82,8 @@ public class Home extends AppCompatActivity
     FirebaseStorage storage;
     StorageReference storageReference;
     FirebaseRecyclerAdapter<Event, MenuViewHolder> adapter;
+
+    FirebaseAuth firebaseAuth;
 
     //View
     RecyclerView recycler_menu;
@@ -119,6 +122,8 @@ public class Home extends AppCompatActivity
         events = database.getReference("Events");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -422,14 +427,24 @@ public class Home extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_logout) {
             //Logout
-            Intent main = new Intent(Home.this, MainActivity.class);
-            main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(main);
+            Logout();
+//            Intent main = new Intent(Home.this, MainActivity.class);
+//            main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(main);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void Logout() {
+        firebaseAuth.signOut();
+        finish();
+        Intent main = new Intent(Home.this, MainActivity.class);
+
+            startActivity(main);
+
     }
 
     @Override
