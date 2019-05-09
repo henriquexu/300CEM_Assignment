@@ -11,7 +11,7 @@
     <string name="event_address">活動地址</string>
     <string name="event_date">活動日期</string>
     <string name="password">密碼</string>
-    <string name="phone">電話號碼</string>
+    <string name="email">電郵地址</string>
     <string name="userName">名字</string>
     <string name="slogan">活動紀錄APP</string>
     <string name="select">選擇圖片</string>

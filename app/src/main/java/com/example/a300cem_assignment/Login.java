@@ -40,7 +40,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        edtPhone = findViewById(R.id.edtPhone);
+        edtPhone = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         checkBox = findViewById(R.id.checkbox);
@@ -64,12 +64,9 @@ public class Login extends AppCompatActivity {
         final DatabaseReference table_user = database.getReference("User");
         final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user!=null){
-            finish();
-            Intent home = new Intent(Login.this, Home.class);;
-            startActivity(home);
-
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            firebaseAuth.signOut();
         }
 
 
@@ -110,12 +107,11 @@ public class Login extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         loadDialog.dismiss();
-                                        User user = dataSnapshot.child(firebaseAuth.getUid()).getValue(User.class);
+                                        Common.currentUser = dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(User.class);
+                                        finish();
                                         Intent home = new Intent(Login.this, Home.class);
-                                        Common.currentUser = user;
                                         home.putExtra("UserId", firebaseAuth.getUid());
                                         startActivity(home);
-                                        finish();
                                     }
 
                                     @Override
@@ -129,37 +125,6 @@ public class Login extends AppCompatActivity {
 
                         }
                     });
-
-//                table_user.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        //Check if user exists
-//                        if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
-//                            //Get user info
-//                            loadDialog.dismiss();
-//                            User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
-//                            if (user.getPassword().equals(edtPassword.getText().toString())) {
-//                                {
-//                                    Intent home = new Intent(Login.this, Home.class);
-//                                    Common.currentUser = user;
-//                                    home.putExtra("UserId", edtPhone.getText().toString());
-//                                    startActivity(home);
-//                                    finish();
-//                                }
-//                            } else {
-//                                Toast.makeText(Login.this, getString(R.string.loginFailed), Toast.LENGTH_SHORT).show();
-//                            }
-//                        } else {
-//                            loadDialog.dismiss();
-//                            Toast.makeText(Login.this, getString(R.string.userNotExist), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
                 }
             }
         });

@@ -2,24 +2,24 @@ package com.example.a300cem_assignment.Model;
 
 public class User {
     private String Name;
+    private String Email;
     private String Password;
-    private String Phone;
 
     public User() {
     }
 
-    public User(String name, String password, String phone) {
+    public User(String name, String email, String password) {
         Name = name;
+        Email = email;
         Password = password;
-        Phone = phone;
     }
 
-    public String getPhone() {
-        return Phone;
+    public String getEmail() {
+        return Email;
     }
 
-    public void setPhone(String phone) {
-        Phone = phone;
+    public void setEmail(String email) {
+        Email = email;
     }
 
     public String getName() {

@@ -428,9 +428,6 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             //Logout
             Logout();
-//            Intent main = new Intent(Home.this, MainActivity.class);
-//            main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            startActivity(main);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

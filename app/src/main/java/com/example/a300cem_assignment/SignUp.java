@@ -1,6 +1,7 @@
 package com.example.a300cem_assignment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -51,9 +52,9 @@ public class SignUp extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 loadDialog.dismiss();
                                 saveUserData();
-                                firebaseAuth.signOut();
                                 Toast.makeText(SignUp.this, getString(R.string.signUpCompleted), Toast.LENGTH_SHORT).show();
                                 finish();
+                                startActivity(new Intent(SignUp.this, MainActivity.class));
                             } else {
                                 //Catch Error
                                 try {
@@ -68,6 +69,7 @@ public class SignUp extends AppCompatActivity {
                             }
                         }
                     });
+                    firebaseAuth.signOut();
                 }
             }
         });
@@ -81,7 +83,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void setUpView() {
-        edtPhone = findViewById(R.id.edtPhone);
+        edtPhone = findViewById(R.id.edtEmail);
         edtName = findViewById(R.id.edtName);
         edtPassword = findViewById(R.id.edtPassword);
         btnSignUp = findViewById(R.id.btnSignUp);
