@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -19,6 +20,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,9 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
-    EditText edtPhone, edtPassword;
+    EditText edtEmail, edtPassword;
     Button btnLogin;
-    public static final String NAME_KEY = "NAME_KEY";
+    public static final String EMAIL_KEY = "EMAIL_KEY";
     public static final String PASSWORD_KEY = "PASSWORD_KEY";
     public static final String CHECKBOX_KEY = "CHECKBOX_KEY";
     private SharedPreferences sharedPreferences;
@@ -40,7 +43,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        edtPhone = findViewById(R.id.edtEmail);
+        edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         checkBox = findViewById(R.id.checkbox);
@@ -48,8 +51,8 @@ public class Login extends AppCompatActivity {
         //Get login info form shared preference
         sharedPreferences = getSharedPreferences("MySharedPreMain", Context.MODE_PRIVATE);
 
-        if (sharedPreferences.contains(NAME_KEY)) {
-            edtPhone.setText(sharedPreferences.getString(NAME_KEY, ""));
+        if (sharedPreferences.contains(EMAIL_KEY)) {
+            edtEmail.setText(sharedPreferences.getString(EMAIL_KEY, ""));
         }
 
         if (sharedPreferences.contains(PASSWORD_KEY)) {
@@ -77,15 +80,15 @@ public class Login extends AppCompatActivity {
                 final ProgressDialog loadDialog = new ProgressDialog(Login.this);
                 loadDialog.setMessage(getString(R.string.wait));
                 loadDialog.show();
-                if (edtPhone.getText().toString().equals("")) {
+                if (edtEmail.getText().toString().isEmpty() || edtPassword.getText().toString().isEmpty()) {
                     loadDialog.dismiss();
-                    Toast.makeText(Login.this, getString(R.string.inputPhone), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, getString(R.string.fillInfo), Toast.LENGTH_SHORT).show();
                 } else {
                     //Save login info to shared preference
                     if (checkBox.isChecked()) {
                         checkBox.setChecked(true);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(NAME_KEY, edtPhone.getText().toString());
+                        editor.putString(EMAIL_KEY, edtEmail.getText().toString());
                         editor.putString(PASSWORD_KEY, edtPassword.getText().toString());
                         editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
                         editor.apply();
@@ -93,13 +96,13 @@ public class Login extends AppCompatActivity {
                     if (!checkBox.isChecked()) {
                         checkBox.setChecked(false);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(NAME_KEY, "");
+                        editor.putString(EMAIL_KEY, "");
                         editor.putString(PASSWORD_KEY, "");
                         editor.putBoolean(CHECKBOX_KEY, checkBox.isChecked());
                         editor.apply();
                     }
 
-                    firebaseAuth.signInWithEmailAndPassword(edtPhone.getText().toString(), edtPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    firebaseAuth.signInWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
@@ -109,6 +112,7 @@ public class Login extends AppCompatActivity {
                                         loadDialog.dismiss();
                                         Common.currentUser = dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(User.class);
                                         finish();
+                                        Toast.makeText(Login.this, getString(R.string.loginSuccess), Toast.LENGTH_SHORT).show();
                                         Intent home = new Intent(Login.this, Home.class);
                                         home.putExtra("UserId", firebaseAuth.getUid());
                                         startActivity(home);
@@ -120,7 +124,27 @@ public class Login extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                Toast.makeText(Login.this, getString(R.string.loginFailed), Toast.LENGTH_SHORT).show();
+                                try
+                                {
+                                    throw task.getException();
+                                }
+                                //Wrong email.
+                                catch (FirebaseAuthInvalidUserException invalidEmail)
+                                {
+                                    loadDialog.dismiss();
+                                    Toast.makeText(Login.this, getString(R.string.userNotExist), Toast.LENGTH_SHORT).show();
+                                }
+                                //Wrong password.
+                                catch (FirebaseAuthInvalidCredentialsException wrongPassword)
+                                {
+                                    loadDialog.dismiss();
+                                    Toast.makeText(Login.this, getString(R.string.wrongPassword), Toast.LENGTH_SHORT).show();
+                                }
+                                catch (Exception e)
+                                {
+                                    loadDialog.dismiss();
+                                    e.printStackTrace();
+                                }
                             }
 
                         }

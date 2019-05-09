@@ -33,7 +33,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.Resource;
 import com.example.a300cem_assignment.Common.Common;
 import com.example.a300cem_assignment.Interface.ItemClickListener;
 import com.example.a300cem_assignment.Model.Event;
@@ -82,7 +81,6 @@ public class Home extends AppCompatActivity
     FirebaseStorage storage;
     StorageReference storageReference;
     FirebaseRecyclerAdapter<Event, MenuViewHolder> adapter;
-
     FirebaseAuth firebaseAuth;
 
     //View
@@ -125,6 +123,7 @@ public class Home extends AppCompatActivity
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        //Floating Button Click
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +131,7 @@ public class Home extends AppCompatActivity
                 showCreateDialog();
             }
         });
+
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -166,6 +166,7 @@ public class Home extends AppCompatActivity
         placesClient = Places.createClient(this);
     }
 
+    //Create Event
     private void showCreateDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle(getString(R.string.addEvent));
@@ -248,6 +249,7 @@ public class Home extends AppCompatActivity
 
     }
 
+    //Select Event Date
     private void selectDate() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -322,6 +324,7 @@ public class Home extends AppCompatActivity
         }
     }
 
+    //Pick Gallery
     private void pickGallery() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -329,12 +332,14 @@ public class Home extends AppCompatActivity
         startActivityForResult(Intent.createChooser(intent, getString(R.string.select)), PICK_IMAGE);
     }
 
+    //Pick Camera
     private void pickCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, saveUri);
         startActivityForResult(Intent.createChooser(intent, getString(R.string.select)), PICK_CAMERA);
     }
 
+    //Get camere or gallery
     private void showImageImportDialog() {
         String[] items = {getString(R.string.camera), getString(R.string.gallery)};
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -354,6 +359,7 @@ public class Home extends AppCompatActivity
         dialog.create().show();
     }
 
+    //Load Main Page
     private void loadMenu(String userId) {
         Query getByUserId = events.orderByChild("userId").equalTo(userId);
         FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>()
@@ -435,6 +441,7 @@ public class Home extends AppCompatActivity
         return true;
     }
 
+    //Logout
     private void Logout() {
         firebaseAuth.signOut();
         finish();
@@ -455,6 +462,7 @@ public class Home extends AppCompatActivity
     }
 
 
+    //Update Event
     private void showUpdateDialog(final String key, final Event item) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle(getString(R.string.updateEvent));
@@ -551,6 +559,7 @@ public class Home extends AppCompatActivity
         alertDialog.show();
     }
 
+    //Change Image
     private void changeImage(final Event item) {
         if (saveUri != null) {
             final ProgressDialog loadDialog = new ProgressDialog(this);
@@ -591,6 +600,7 @@ public class Home extends AppCompatActivity
         }
     }
 
+    //Delete Event
     private void deleteEvent(String key) {
         events.child(key).removeValue();
     }

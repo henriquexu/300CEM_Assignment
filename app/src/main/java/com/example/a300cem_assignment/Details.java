@@ -40,11 +40,8 @@ public class Details extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-
-
         //Map Fragment
         map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
 
         //Firebase init
         database = FirebaseDatabase.getInstance();
@@ -61,13 +58,14 @@ public class Details extends AppCompatActivity {
             eventId = getIntent().getStringExtra("EventId");
         }
         if (!eventId.isEmpty()) {
-            getDetailFood(eventId);
+            getEventDetail(eventId);
 
         }
     }
 
-    private void getDetailFood(final String categoryId) {
-        events.child(categoryId).addValueEventListener(new ValueEventListener() {
+    //Get Event Detail
+    private void getEventDetail(final String eventId) {
+        events.child(eventId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
@@ -77,11 +75,11 @@ public class Details extends AppCompatActivity {
 
                 //Set Image
                 Picasso.with(getBaseContext()).load(event.getImage()).into(event_image);
-
+                //Set Event Details
                 collapsingToolbarLayout.setTitle(event.getName());
                 event_date.setText(event.getDate());
                 event_description.setText(event.getAddress());
-
+                //Set Google Map
                 lat = event.getLat();
                 lng = event.getLng();
                 map.getMapAsync(new OnMapReadyCallback() {
@@ -100,6 +98,4 @@ public class Details extends AppCompatActivity {
             }
         });
     }
-
-
 }

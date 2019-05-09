@@ -15,7 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -59,9 +61,23 @@ public class SignUp extends AppCompatActivity {
                                 //Catch Error
                                 try {
                                     throw task.getException();
-                                } catch (FirebaseAuthUserCollisionException existEmail) {
+                                }
+                                //Weak password
+                                catch (FirebaseAuthWeakPasswordException weakPassword)
+                                {
                                     loadDialog.dismiss();
-                                    Toast.makeText(SignUp.this, "Email exists", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SignUp.this, getString(R.string.passwordWeak), Toast.LENGTH_SHORT).show();
+                                }
+                                //Email malformed
+                                catch (FirebaseAuthInvalidCredentialsException malformedEmail)
+                                {
+                                    loadDialog.dismiss();
+                                    Toast.makeText(SignUp.this, getString(R.string.wrongTypeEmail), Toast.LENGTH_SHORT).show();
+                                }
+                                //Email exists
+                                catch (FirebaseAuthUserCollisionException existEmail) {
+                                    loadDialog.dismiss();
+                                    Toast.makeText(SignUp.this, getString(R.string.existEmail), Toast.LENGTH_SHORT).show();
                                 } catch (Exception e) {
                                     loadDialog.dismiss();
                                     e.printStackTrace();

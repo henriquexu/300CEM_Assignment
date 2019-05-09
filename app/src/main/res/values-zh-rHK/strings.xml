@@ -37,4 +37,10 @@
     <string name="eventName">活動名稱</string>
     <string name="event_selectDate">選擇日期</string>
     <string name="upload">上載</string>
+    <string name="existEmail">電郵已被使用</string>
+    <string name="image">圖片</string>
+    <string name="loginSuccess">登入成功</string>
+    <string name="passwordWeak">密碼不夠強</string>
+    <string name="wrongPassword">密碼錯誤</string>
+    <string name="wrongTypeEmail">電郵格式不正確</string>
 </resources>

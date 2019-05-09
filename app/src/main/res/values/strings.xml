@@ -40,4 +40,10 @@
     <string name="eventName">Event Name</string>
     <string name="event_selectDate">Select Date</string>
     <string name="upload">Upload</string>
+    <string name="image">Image</string>
+    <string name="loginSuccess">Login Successful</string>
+    <string name="wrongPassword">Wrong Password</string>
+    <string name="existEmail">Email Exists</string>
+    <string name="passwordWeak">Weak Password</string>
+    <string name="wrongTypeEmail">Email format wrong</string>
 </resources>
